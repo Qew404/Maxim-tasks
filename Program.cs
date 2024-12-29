@@ -56,6 +56,9 @@
         Console.WriteLine("Результат: " + process);
         //Вызов метода для подсчета символов
         NumberOfProcessedStringsAndCharacters(process);
+        //Вызов метода для поиска подстройки
+        string longestVowelSubstring = FindLongestVowelSubstring(process);
+        Console.WriteLine("Наибольшая подстрока: " + longestVowelSubstring);
     }
     // Метод для переворота строки
     static string ReverseString(string str)
@@ -79,5 +82,34 @@
             int value = charCount[key];
             Console.WriteLine($"{key}: {value} раз(а)");
         }
+    }
+    //Метод для поиска наибольшей подстройки, который начинается и заканчивается на гласную
+    static string FindLongestVowelSubstring(string str)
+    {
+        //Гласные буквы
+        string vowels = "aeiouy";
+        //Переменная для наибольшей подстройки
+        string longestSubsring = string.Empty;
+        //Вложенные циклы для поиска подстроек
+        for (int start = 0; start < str.Length; start++) //Переберает каждый символ как возможное начало подстроки
+        {
+            for (int end = start + 1; end < str.Length; end++) //Начинает с внешнего цикла и до конца, чтобы найти конец подстроки
+            {
+                //Проверка являются ли начальный и конечный символы гласными
+                if (vowels.Contains(str[start]) && vowels.Contains(str[end]))
+                {
+                    //Извлечение подстроки
+                    string substring = str.Substring(start, end - start + 1);
+                    //Проверка на длинну
+                    if (substring.Length > longestSubsring.Length)
+                    {
+                        //Обновляем наибольшую подстройку
+                        longestSubsring = substring;
+                    }
+                }
+            }
+        }
+        //Возвращаем наибольшую подстройку
+        return longestSubsring;
     }
 }
