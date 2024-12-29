@@ -6,6 +6,28 @@ if (string.IsNullOrWhiteSpace(input))
     Console.WriteLine("Пустая строка");
     return;
 }
+
+// Список для хранения неподходящих символов
+List<char> invalidChars = new List<char>();
+// Проверка символов в строке
+for (int i = 0;  i < input.Length; i++)
+{
+    char c = input[i];
+    if (c < 'a' || c > 'z')
+    {
+        //Добавление неподходящего символа в список
+        invalidChars.Add(c);
+    }
+}
+
+// Если есть неподходящие символы, выводим ошибку
+if (invalidChars.Count > 0)
+{
+    // Выводим список неподходящих символов
+    Console.WriteLine("Ошибка: Неподходящие символы: " + string.Join(", ", invalidChars));
+    return;
+}
+
 string process;
 // Проверка четное/нечетное
 if (input.Length % 2 == 0)
