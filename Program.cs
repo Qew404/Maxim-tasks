@@ -1,4 +1,6 @@
-﻿class Program
+﻿using System.IO.IsolatedStorage;
+
+class Program
 {
     static void Main()
     {
@@ -59,6 +61,25 @@
         //Вызов метода для поиска подстройки
         string longestVowelSubstring = FindLongestVowelSubstring(process);
         Console.WriteLine("Наибольшая подстрока: " + longestVowelSubstring);
+        //Выбор сортировки
+        Console.WriteLine("Выбирите желаемый алгоритм сортировки (1 - Быстрая сортировка, 2 - Сортировка деревом)");
+        string choise = Console.ReadLine();
+        string sortedResult = string.Empty;
+        if (choise == "1")
+        {
+            sortedResult = QuickSort(process.ToCharArray());
+        }
+        else if (choise == "2")
+        {
+            sortedResult = TreeSort(process.ToCharArray());
+        }
+        else
+        {
+            Console.WriteLine("Неверный выбор сортировки");
+            return;
+        }
+        Console.WriteLine("Отсортированная обработанная строка:" + sortedResult);
+
     }
     // Метод для переворота строки
     static string ReverseString(string str)
@@ -111,5 +132,77 @@
         }
         //Возвращаем наибольшую подстройку
         return longestSubsring;
+    }
+    //Метод бля быстрой сортировки
+    static string QuickSort (char[] Array)
+    {
+        if (Array.Length <= 1) return new string(Array);
+        //Выбор опорного элимента
+        char pivot = Array[Array.Length / 2];
+        //Элименты больше опорного
+        char[] greater = Array.Where(x => x > pivot).ToArray();
+        //Элименты меньше опорного
+        char[] less = Array.Where(x => x < pivot).ToArray();
+        //Элименты равны опорному
+        char[] equal = Array.Where(x => x == pivot).ToArray();
+        //Рекурсивная сортировка и объединение результата
+        return QuickSort(less) + new string(equal) + QuickSort(greater);
+    }
+    public class TreeNode
+    {
+        public char Value;
+        public TreeNode Left;
+        public TreeNode Right;
+        public TreeNode(char value)
+        {
+            Value = value;
+        }
+    }
+    //Метод сортировки деревом
+    static string TreeSort(char[] array)
+    {
+        TreeNode root = null;
+        // Вставка в дерево элимента
+        foreach (char value in array)
+        {
+            root = Insert(root, value);
+        }
+
+        // Отсортированные элименты
+        List<char> sortedList = new List<char>();
+        InOrderTraversal(root, sortedList);
+
+        return new string(sortedList.ToArray());
+    }
+
+    // Метод для вставки элемента в дерево
+    static TreeNode Insert(TreeNode node, char value)
+    {
+        if (node == null)
+        {
+            return new TreeNode(value); // Создаем новый узел
+        }
+
+        if (value < node.Value)
+        {
+            node.Left = Insert(node.Left, value); // Вставляем в левое поддерево
+        }
+        else
+        {
+            node.Right = Insert(node.Right, value); // Вставляем в правое поддерево
+        }
+
+        return node; // Возвращаем текущий узел
+    }
+
+    // Метод для обхода дерева в порядке возрастания
+    static void InOrderTraversal(TreeNode node, List<char> sortedList)
+    {
+        if (node != null)
+        {
+            InOrderTraversal(node.Left, sortedList); // Обход левого поддерева
+            sortedList.Add(node.Value); // Добавляем текущий узел
+            InOrderTraversal(node.Right, sortedList); // Обход правого поддерева
+        }
     }
 }
