@@ -1,8 +1,11 @@
-﻿using System.IO.IsolatedStorage;
+﻿using System.ComponentModel.DataAnnotations;
+using System.IO.IsolatedStorage;
+using System.Net.Security;
+using System.Security.Cryptography;
 
 class Program
 {
-    static void Main()
+    static async Task Main()
     {
         Console.WriteLine("Ввод строки:");
         string input = Console.ReadLine();
@@ -55,7 +58,8 @@ class Program
             process = reversedInput + input;
         }
 
-        Console.WriteLine("Результат: " + process);
+        //Console.WriteLine("Результат: " + process);
+
         //Вызов метода для подсчета символов
         NumberOfProcessedStringsAndCharacters(process);
         //Вызов метода для поиска подстройки
@@ -80,7 +84,17 @@ class Program
         }
         Console.WriteLine("Отсортированная обработанная строка:" + sortedResult);
 
+            //Получение случайного числа API
+            int randomIndex = await GetRandomIndex (process.Length);
+
+            //Удаление символа по случайному индексу
+            string modifiedString = RemoveCharacterAtIndex(process, randomIndex);
+
+            //Вывод результата
+            Console.WriteLine($"Случайный индекс: {randomIndex}");
+            Console.WriteLine($"Строка после удаления: {modifiedString}");
     }
+    
     // Метод для переворота строки
     static string ReverseString(string str)
     {
@@ -204,5 +218,33 @@ class Program
             sortedList.Add(node.Value); // Добавляем текущий узел
             InOrderTraversal(node.Right, sortedList); // Обход правого поддерева
         }
+    }
+    //Метод для получения случайного числа
+    static async Task <int> GetRandomIndex(int max)
+    {
+        using HttpClient client = new();
+        string url = $"http://www.randomnumberapi.com/api/v1.0/random?min=0&max={max - 1}&count=1";
+        try
+        {
+            //Асинхронный запрос к API 
+            var response = await client.GetStringAsync(url);
+            //Убираем из ответа скобки и разбиваем в массив чисел
+            var numbers = response.Trim('[', ']').Split(',');
+            //Парсим первое число из массива и возращаем его как целое
+            return int.Parse(numbers[0]);
+        }
+        catch (Exception)
+        {
+            //Если API недоступен, то генерируем случайное число
+            Random random = new Random();
+            //Возвращаем случайное число от 0 до конца строки
+            return random.Next(0, max);
+        } 
+    }
+    //Метод для удаления символа по индексу
+    static string RemoveCharacterAtIndex (string str, int index)
+    {
+        //Удаляет часть строки начиная с заданного индекса длинной в 1 символ
+        return str.Remove(index, 1) ;
     }
 }
